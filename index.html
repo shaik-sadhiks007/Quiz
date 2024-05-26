@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: rgb(7, 31, 124);
+        }
+
+        .answerhover:hover {
+            background-color: black;
+            color: white;
+            transition: background-color 500ms, color 500ms;
+        }
+
+        .cursor {
+            cursor: pointer;
+        }
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 20px;
+        }
+        .custom-container{
+            margin-top: 75px;
+        
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col-8 mx-auto">
+                <div class="custom-container bg-light p-5">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h2 class="cursor">Simple Quiz</h2>
+                        <h4 class="" id="out"></h4>
+                    </div>
+
+                    <hr class="bg-success">
+                    <p class="fs-3" id="result"></p>
+                    <div class="" id="question">
+                        <p class="fs-4 mb-4 cursor " id="q1">1. What is area of circle ?</p>
+                        <img src="" alt="" id="image" >
+                        <p class="border border-dark fs-5 ps-3 mb-4 py-1 cursor answer">pi r square</p>
+                        <p class="border border-dark fs-5 ps-3 mb-4 py-1 cursor answer">pi r square</p>
+                        <p class="border border-dark fs-5 ps-3 mb-4 py-1 cursor answer">pi r square</p>
+                        <p class="border border-dark fs-5 ps-3 mb-4 py-1 cursor answer">pi r square</p>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-danger px-4 fs-5 py-2" id="previous" onclick="prev()">Previous</button>
+                        <button class="btn btn-warning px-5 fs-5 py-2" id="button" onclick="start()">Start</button>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+    <script>
+
+        const quiz =
+            [
+                {
+                    question: "1. Inside which HTML element do we put the JavaScript?",
+                    answers:
+                        [
+                            {
+                                text: "script tag", correct: true
+                            },
+                            {
+                                text: 'javascript tag', correct: false
+                            },
+                            {
+                                text: 'scripting tag', correct: false
+                            },
+                            {
+                                text: 'js tag', correct: false
+                            }
+                        ]
+                },
+                {
+                    question: "2. Javascript is an _______ language?",
+                    answers:
+                        [
+                            {
+                                text: 'None of the Above', correct: false
+                            },
+                            {
+                                text: 'Object-Based', correct: false
+                            },
+                            {
+                                text: 'Procedural', correct: false
+                            },
+                            {
+                                text: 'Object-Oriented', correct: true
+
+                            }
+                        ]
+                },
+                {
+                    question: "3. What is the use of the noscript tag in Javascript?",
+                    answers:
+                        [
+                            {
+                                text: 'Clears all the cookies and cache', correct: false
+                            },
+                            {
+                                text: 'The contents are displayed by non-JS-based browsers', correct: true
+                            },
+                            {
+                                text: 'Both A and B', correct: false
+                            },
+                            {
+                                text: 'None of the Above', correct: false
+                            }
+                        ]
+                },
+                {
+                    question: "4. What does the Javascript “debugger” statement do?",
+                    answers:
+                        [
+                            {
+                                text: 'It will debug all the erros in the program at runtime', correct: false
+                            },
+                            {
+                                text: 'It acts as a breakpoint in a program', correct: true
+                            },
+                            {
+                                text: 'It will debug error in the current statement if any', correct: false
+                            },
+                            {
+                                text: 'All of the Above', correct: false
+                            }
+                        ]
+                },
+                {
+                    question: "5. what is name of the animal in the below image ?",
+                    imgsrc : "https://img.freepik.com/free-vector/cute-panda-with-bamboo_138676-3053.jpg?t=st=1716698245~exp=1716698845~hmac=c45073dd75bb513e45caccd12d9988223cca06ae700aba78df61395e7e5088b6",
+                    answers:
+                        [
+                            {
+                                text: "panda ", correct: true
+                            },
+                            {
+                                text: 'cheetah', correct: false
+                            },
+                            {
+                                text: 'lion', correct: false
+                            },
+                            {
+                                text: 'elephant', correct: false
+                            }
+                        ]
+                },
+            ]
+
+        let questions = document.getElementById('question');
+        let q1 = document.getElementById('q1');
+        questions.style.display = 'none';
+        const button = document.getElementById('button');
+        const quizLength = quiz.length;
+        let ans = document.querySelectorAll('.answer');
+        let image = document.getElementById('image')
+
+        let count = 0;
+        let out = document.getElementById('out');
+        let answered = false;
+        let correctAnswers = 0;
+
+        let result = document.getElementById('result');
+
+        let previous = document.getElementById('previous');
+        previous.style.display = 'none';
+
+        function start() {
+
+            if (button.textContent === 'Start') {
+                correctAnswers = 0;
+                displayQuestion()
+                questions.style.display = 'block';
+                previous.style.display = 'block';
+                button.textContent = 'Next';
+                answered = false;
+
+            }
+            else if (button.textContent === 'Submit') {
+                result.innerHTML = `Your score is ${correctAnswers} out of ${quizLength}`;
+                button.textContent = 'Restart';
+                questions.style.display = 'none';
+                previous.style.display = 'none';
+                out.innerHTML = '';
+                image.style.display = 'none'
+            }
+            else if (button.textContent === 'Restart') {
+                button.textContent = 'Start';
+                result.innerHTML = '';
+                count = 0;
+                start()
+            }
+            else {
+                displayQuestion()
+                answered = false;
+            }
+
+
+        }
+
+        function displayQuestion() {
+
+            if (count == quiz.length - 1) {
+                button.textContent = 'Submit';
+            }
+            answered = false;
+
+            q1.innerHTML = quiz[count].question;
+            if(quiz[count].imgsrc){
+                image.style.display = 'block'
+                image.src = quiz[count].imgsrc ;
+                image.style.width = '400px'
+                image.style.height = '300px'
+                image.marginBottom = '10px'
+                image.classList.add('center');
+            }
+            ans.forEach((a, index) => {
+                a.innerHTML = quiz[count].answers[index].text;
+                ans[index].style.backgroundColor = 'white';
+                ans[index].style.color = 'black';
+                a.addEventListener('click', () => showAnswer(index));
+            });
+
+            count++;
+            out.innerHTML = `${count} out of ${quizLength}`;
+        }
+
+        function showAnswer(type) {
+
+            if (!answered) {
+                if (quiz[count - 1].answers[type].correct === true) {
+                    ans[type].style.backgroundColor = 'green';
+                    ans[type].style.color = 'white';
+                    correctAnswers++;
+                }
+                else {
+
+                    quiz[count - 1].answers.forEach((e, index) => {
+                        if (e.correct === true) {
+                            ans[index].style.backgroundColor = 'green';
+                            ans[index].style.color = 'white';
+                            ans[index].style.color = 'white';
+                        }
+                    })
+                    ans[type].style.backgroundColor = 'red';
+                    ans[type].style.color = 'white';
+
+                }
+            }
+
+            answered = true;
+
+            ans.forEach(answer => {
+                // answer.classList.remove('answer:hover');
+                answer.onclick = null;
+            });
+
+        }
+
+        function prev() {
+            if (count > 1) {
+                count=count-2;
+                displayQuestion(); 
+            }
+        }
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
